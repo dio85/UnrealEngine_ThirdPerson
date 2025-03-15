@@ -1,20 +1,21 @@
+// KawaiiPhysics : Copyright (c) 2019-2024 pafuhana1213, MIT License
+
 #include "KawaiiPhysics.h"
+#include "Modules/ModuleManager.h"
 
-DEFINE_LOG_CATEGORY(LogKawaiiPhysics)
+#define LOCTEXT_NAMESPACE "FKawaiiPhysicsModule"
 
-class FKawaiiPhysicsPlugin : public IKawaiiPhysicsPlugin
+void FKawaiiPhysicsModule::StartupModule()
 {
-public:
-	virtual void StartupModule() override
-	{
-		UE_LOG(LogKawaiiPhysics, Log, TEXT("KawaiiPhysics Plugin : StartupModule"));
-	}
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+}
 
-	virtual void ShutdownModule() override
-	{
-		UE_LOG(LogKawaiiPhysics, Log, TEXT("KawaiiPhysics Plugin : StartupModule"));
-	}
-};
+void FKawaiiPhysicsModule::ShutdownModule()
+{
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
+}
 
-IMPLEMENT_MODULE(FKawaiiPhysicsPlugin, KawaiiPhysics)
+#undef LOCTEXT_NAMESPACE
 
+IMPLEMENT_MODULE(FKawaiiPhysicsModule, KawaiiPhysics)

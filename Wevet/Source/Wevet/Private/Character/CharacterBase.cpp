@@ -12,6 +12,8 @@
 #include "LocomotionSystemMacroLibrary.h"
 #include "Perception/AISense_Hearing.h"
 #include "Item/NakedWeapon.h"
+#include "GameFramework/DamageType.h"
+#include "Engine/DamageEvents.h"
 
 
 ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -84,7 +86,7 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 
 	// SetUp CharacterMovement
 	GetCharacterMovement()->BrakingFrictionFactor = ZERO_VALUE;
-	GetCharacterMovement()->CrouchedHalfHeight = 60.f;
+	GetCharacterMovement()->SetCrouchedHalfHeight(60.f);
 	GetCharacterMovement()->SetWalkableFloorAngle(50.f);
 	GetCharacterMovement()->MaxWalkSpeed = 800.f;
 	GetCharacterMovement()->bCanWalkOffLedgesWhenCrouching = 1;
@@ -1616,22 +1618,15 @@ EWeaponItemType ACharacterBase::GetCurrentWeaponType() const
 /// <returns></returns>
 AAbstractWeapon* ACharacterBase::SwitchWeaponAction() const
 {
-	// @NOTE
-	// Find HighPriorityWeapon
-	// etx Pistol, Rifle
 	bool FoundResult = false;
 	GetInventoryComponent()->FindHighPriorityWeapon(FoundResult);
+
 	if (FoundResult)
 	{
-		// Found Gun
 		return GetInventoryComponent()->GetAvailableWeapon();
 	}
-	else
-	{
-		// Not Found Naked
-		return GetInventoryComponent()->GetNakedWeapon();
-	}
-	return nullptr;
+
+	return GetInventoryComponent()->GetNakedWeapon();
 }
 
 

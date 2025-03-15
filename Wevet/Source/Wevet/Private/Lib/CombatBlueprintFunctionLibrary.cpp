@@ -48,7 +48,7 @@ bool UCombatBlueprintFunctionLibrary::CanDamagedActor(AActor* OtherActor, AActor
 	}
 
 	// Same Actor or Hit Actor Owner or PendingKilling
-	if ((OtherActor == InSelf) || (OtherActor == InOwner) || OtherActor->IsPendingKill())
+	if ((OtherActor == InSelf) || (OtherActor == InOwner) || OtherActor->IsPendingKillPending())
 	{
 		return false;
 	}
@@ -93,7 +93,7 @@ float UCombatBlueprintFunctionLibrary::CalcurateBaseDamage(const FHitResult& Hit
 	}
 
 	// Same Actor or Hit Actor Owner or PendingKilling
-	if ((OtherActor == InSelf) || (OtherActor == InOwner) || OtherActor->IsPendingKill())
+	if ((OtherActor == InSelf) || (OtherActor == InOwner) || OtherActor->IsPendingKillPending())
 	{
 		return TotalDamage;
 	}

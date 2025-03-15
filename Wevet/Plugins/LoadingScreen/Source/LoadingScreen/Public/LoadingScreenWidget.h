@@ -5,6 +5,8 @@
 #include "Widgets/Images/SThrobber.h"
 #include "MoviePlayer.h"
 #include "LoadingScreenBrush.h"
+#include "Brushes/SlateDynamicImageBrush.h"
+#include "Slate/SlateBrushAsset.h"
 
 class SLoadingScreenWidget : public SCompoundWidget
 {
@@ -16,7 +18,7 @@ public:
 	{
 		static const FName LoadingScreenName(TEXT("/Game/UI/T_ActionRPG_TransparentLogo.T_ActionRPG_TransparentLogo"));
 
-		LoadingScreenBrush = MakeShareable(new FLoadingScreenBrush(LoadingScreenName, FVector2D(1024, 256)));
+		LoadingScreenBrush = MakeShareable(new FSlateDynamicImageBrush(LoadingScreenName, FVector2D(1024, 256)));
 		
 		FSlateBrush *BGBrush = new FSlateBrush();
 		BGBrush->TintColor = FLinearColor(0.034f, 0.034f, 0.034f, 1.0f);

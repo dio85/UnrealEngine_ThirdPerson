@@ -8,12 +8,8 @@ public class WevetTarget : TargetRules
 	public WevetTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-
-		//bCompileChaos = true;
-		bUseChaos = true;
-		//bUseChaosChecked = true;
-		//bUseChaosMemoryTracking = true;
-
-		ExtraModuleNames.AddRange( new string[] { "Wevet" } );
+        CppStandard = CppStandardVersion.Cpp20;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+        ExtraModuleNames.AddRange( new string[] { "Wevet" } );
 	}
 }

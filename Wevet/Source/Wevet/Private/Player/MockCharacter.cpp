@@ -471,7 +471,7 @@ void AMockCharacter::SetALSCameraShake_Implementation(TSubclassOf<class UCameraS
 {
 	if (PlayerController)
 	{
-		PlayerController->ClientStartCameraShake(InShakeClass, InScale, ECameraAnimPlaySpace::Type::CameraLocal);
+		PlayerController->ClientStartCameraShake(InShakeClass, InScale, ECameraShakePlaySpace::CameraLocal);
 	}
 }
 #pragma endregion

@@ -1,78 +1,73 @@
+// KawaiiPhysics : Copyright (c) 2019-2024 pafuhana1213, MIT License
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
 #include "AnimNode_KawaiiPhysics.h"
+#include "Engine/DataAsset.h"
+#include "Interfaces/Interface_BoneReferenceSkeletonProvider.h"
 #include "KawaiiPhysicsLimitsDataAsset.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLimitsChanged, struct FPropertyChangedEvent&);
 
-USTRUCT(BlueprintType)
+// Deprecated
+USTRUCT()
 struct FCollisionLimitDataBase
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CollisionLimitBase, meta = (DisplayPriority = "1"))
+	UPROPERTY(meta=(DeprecatedProperty))
+	FBoneReference DrivingBoneReference;
+
+	UPROPERTY(meta=(DeprecatedProperty))
 	FName DrivingBoneName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CollisionLimitBase)
+	UPROPERTY(meta=(DeprecatedProperty))
 	FVector OffsetLocation = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CollisionLimitBase, meta = (ClampMin = "-360", ClampMax = "360"))
+	UPROPERTY(meta=(DeprecatedProperty))
 	FRotator OffsetRotation = FRotator::ZeroRotator;
 
-	UPROPERTY(EditAnywhere, Category = CollisionLimitBase, BlueprintReadWrite)
+	UPROPERTY(meta=(DeprecatedProperty))
 	FVector Location = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere, Category = CollisionLimitBase, BlueprintReadWrite)
+	UPROPERTY(meta=(DeprecatedProperty))
 	FQuat Rotation = FQuat::Identity;
 
-	UPROPERTY(VisibleAnywhere, Category = Debug, meta = (IgnoreForMemberInitializationTest))
+	UPROPERTY(meta=(DeprecatedProperty, IgnoreForMemberInitializationTest))
 	FGuid Guid = FGuid::NewGuid();
 
 protected:
-	void UpdateBase(FCollisionLimitBase* Limit)
+	void ConvertBase(FCollisionLimitBase& Limit) const
 	{
-		DrivingBoneName = Limit->DrivingBone.BoneName;
-		OffsetLocation = Limit->OffsetLocation;
-		OffsetRotation = Limit->OffsetRotation;
-		Location = Limit->Location;
-		Rotation = Limit->Rotation;
-	}
-
-	void ConvertBase(FCollisionLimitBase& Limit)
-	{
-		Limit.DrivingBone.BoneName = DrivingBoneName;
+		Limit.DrivingBone.BoneName = DrivingBoneReference.BoneName;
 		Limit.OffsetLocation = OffsetLocation;
 		Limit.OffsetRotation = OffsetRotation;
 		Limit.Location = Location;
 		Limit.Rotation = Rotation;
+
 #if  WITH_EDITORONLY_DATA
-		Limit.bFromDataAsset = true;
+		Limit.SourceType = ECollisionSourceType::DataAsset;
 		Limit.Guid = Guid;
 #endif
 	}
 };
 
-
-USTRUCT(BlueprintType)
+// Deprecated
+USTRUCT()
 struct FSphericalLimitData : public FCollisionLimitDataBase
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SphericalLimit, meta = (ClampMin = "0"))
+	/** Radius of the sphere */
+	UPROPERTY(meta=(DeprecatedProperty))
 	float Radius = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SphericalLimit)
+	/** Whether to lock bodies inside or outside of the sphere */
+	UPROPERTY(meta=(DeprecatedProperty))
 	ESphericalLimitType LimitType = ESphericalLimitType::Outer;
 
-	void Update(FSphericalLimit* Limit)
-	{
-		UpdateBase(Limit);
-		Radius = Limit->Radius;
-		LimitType = Limit->LimitType;
-	}
-
-	FSphericalLimit Convert()
+	FSphericalLimit Convert() const
 	{
 		FSphericalLimit Limit;
 		ConvertBase(Limit);
@@ -83,26 +78,19 @@ struct FSphericalLimitData : public FCollisionLimitDataBase
 	}
 };
 
-
-USTRUCT(BlueprintType)
+// Deprecated
+USTRUCT()
 struct FCapsuleLimitData : public FCollisionLimitDataBase
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CapsuleLimit, meta = (ClampMin = "0"))
+	UPROPERTY(meta=(DeprecatedProperty))
 	float Radius = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CapsuleLimit, meta = (ClampMin = "0"))
+	UPROPERTY(meta=(DeprecatedProperty))
 	float Length = 10.0f;
 
-	void Update(FCapsuleLimit* Limit)
-	{
-		UpdateBase(Limit);
-		Radius = Limit->Radius;
-		Length = Limit->Length;
-	}
-
-	FCapsuleLimit Convert()
+	FCapsuleLimit Convert() const
 	{
 		FCapsuleLimit Limit;
 		ConvertBase(Limit);
@@ -113,22 +101,35 @@ struct FCapsuleLimitData : public FCollisionLimitDataBase
 	}
 };
 
+// Deprecated
+USTRUCT()
+struct FBoxLimitData : public FCollisionLimitDataBase
+{
+	GENERATED_BODY()
 
-USTRUCT(BlueprintType)
+	UPROPERTY(meta=(DeprecatedProperty))
+	FVector Extent = FVector(5.0f, 5.0f, 5.0f);
+
+	FBoxLimit Convert() const
+	{
+		FBoxLimit Limit;
+		ConvertBase(Limit);
+		Limit.Extent = Extent;
+
+		return Limit;
+	}
+};
+
+// Deprecated
+USTRUCT()
 struct FPlanarLimitData : public FCollisionLimitDataBase
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = PlanarLimit, BlueprintReadWrite)
-	FPlane Plane;
+	UPROPERTY(meta=(DeprecatedProperty))
+	FPlane Plane = FPlane(0, 0, 0, 0);
 
-	void Update(FPlanarLimit* Limit)
-	{
-		UpdateBase(Limit);
-		Plane = Limit->Plane;
-	}
-
-	FPlanarLimit Convert()
+	FPlanarLimit Convert() const
 	{
 		FPlanarLimit Limit;
 		ConvertBase(Limit);
@@ -138,38 +139,60 @@ struct FPlanarLimitData : public FCollisionLimitDataBase
 	}
 };
 
-
+/**
+ * 
+ */
 UCLASS(Blueprintable)
-class KAWAIIPHYSICS_API UKawaiiPhysicsLimitsDataAsset : public UDataAsset
+class KAWAIIPHYSICS_API UKawaiiPhysicsLimitsDataAsset : public UDataAsset, public IBoneReferenceSkeletonProvider
+
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skeleton")
+	TObjectPtr<USkeleton> Skeleton;
+
+	// Deprecated
+	UPROPERTY(meta=(DeprecatedProperty))
+	TArray<FSphericalLimitData> SphericalLimitsData;
+	UPROPERTY(meta=(DeprecatedProperty))
+	TArray<FCapsuleLimitData> CapsuleLimitsData;
+	UPROPERTY(meta=(DeprecatedProperty))
+	TArray<FBoxLimitData> BoxLimitsData;
+	UPROPERTY(meta=(DeprecatedProperty))
+	TArray<FPlanarLimitData> PlanarLimitsData;
+
+#endif
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spherical Limits")
 	TArray<FSphericalLimit> SphericalLimits;
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Capsule Limits")
 	TArray<FCapsuleLimit> CapsuleLimits;
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box Limits")
+	TArray<FBoxLimit> BoxLimits;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Planar Limits")
 	TArray<FPlanarLimit> PlanarLimits;
 
-#if WITH_EDITORONLY_DATA 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spherical Limits")
-	TArray<FSphericalLimitData> SphericalLimitsData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Capsule Limits")
-	TArray<FCapsuleLimitData> CapsuleLimitsData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Planar Limits")
-	TArray<FPlanarLimitData> PlanarLimitsData;
+	// Begin UObject Interface.
+#if WITH_EDITORONLY_DATA
+	virtual void Serialize(FStructuredArchiveRecord Record) override;
 #endif
+	virtual void PostLoad() override;
+	// End UObject Interface.
+
+	// IBoneReferenceSkeletonProvider interface
+	virtual USkeleton* GetSkeleton(bool& bInvalidSkeletonIsError, const IPropertyHandle* PropertyHandle) override;
 
 #if WITH_EDITOR
 	void UpdateLimit(FCollisionLimitBase* Limit);
 
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	FOnLimitsChanged OnLimitsChanged;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
 #endif
 
-
+private:
+#if WITH_EDITOR
+	void Sync();
+#endif
 };

@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.0",
+	"EngineAssociation": "5.5",
 	"Category": "Game",
 	"Description": "ActionGame",
 	"Modules": [
@@ -143,7 +143,7 @@
 		},
 		{
 			"Name": "SlateRemote",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "GameplayAbilities",
@@ -187,7 +187,7 @@
 		},
 		{
 			"Name": "ShallowWater",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "SequencerScripting",
